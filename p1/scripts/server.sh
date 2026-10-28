@@ -11,5 +11,4 @@ if ! systemctl is-active --quiet k3s; then
     --write-kubeconfig-mode 644 \
     --disable=servicelb \
     --disable=traefik \
-    --debug
 fi
