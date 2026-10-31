@@ -1,97 +1,97 @@
+*This project has been created as part of the 42 curriculum by szapata-.*
+
 # Inception of Things
 
-A system administration and DevOps project designed to introduce modern Kubernetes deployment strategies, cluster orchestration, and GitOps workflows.
+## Description
 
----
+The Inception of Things project is a system administration and DevOps module designed to expand upon traditional containerization concepts by introducing modern Kubernetes deployment strategies, cluster orchestration, and GitOps workflows.
 
-## Overview
+The primary goal of this project is to transition from single-node Docker environments to multi-node Kubernetes clusters, implementing automated provisioning, routing traffic via Ingress controllers, and managing declarative continuous deployment.
 
-The Inception of Things project focuses on transitioning from traditional container environments to modern container orchestration using Kubernetes. It provides a structured approach to building clusters, managing deployments, handling ingress routing, and implementing continuous deployment using GitOps practices.
+### Overview
 
----
+* **Part 1: K3s and Vagrant:** Provisioning a local multi-node Kubernetes cluster using Vagrant and K3s (one server node and one worker node).
+* **Part 2: K3s and Applications:** Deploying containerized web applications onto the K3s cluster and configuring an Ingress controller to route external traffic based on host headers and paths.
+* **Part 3: K3d and Argo CD:** Establishing a lightweight local Kubernetes environment using K3d and implementing a GitOps continuous deployment pipeline with Argo CD.
+* **Bonus Part: Local GitLab Integration:** Setting up a self-hosted local GitLab instance within the cluster integrated with custom CI/CD pipelines.
 
-## Repository Structure
+## Instructions
 
-```text
-.
-├── p1/                 # Part 1: Vagrant & K3s Cluster setup
-│   ├── Vagrantfile
-│   └── scripts/
-├── p2/                 # Part 2: Kubernetes Applications, Services & Ingress
-│   └── conf/
-├── p3/                 # Part 3: K3d & Argo CD (GitOps)
-│   └── conf/
-└── bonus/              # Bonus: Local GitLab CI/CD integration
-    └── conf/
-```
+### Prerequisites
 
----
+Ensure the following dependencies are installed on the host machine prior to execution:
 
-## Project Breakdown
-
-### Part 1: K3s and Vagrant
-* **Objective:** Provision a multi-node Kubernetes cluster locally using Vagrant and VirtualBox.
-* **Implementation:** 
-  * A server virtual machine (`s_vm`) running a K3s control plane.
-  * An agent virtual machine (`sw_vm`) joining the cluster as a worker node using a shared cluster token.
-  * Automated provisioning executed via shell scripts.
-
-### Part 2: K3s and Applications
-* **Objective:** Deploy simple web applications onto the K3s cluster and expose them externally.
-* **Implementation:**
-  * Custom `Deployment` and `Service` manifest files written in YAML.
-  * An Ingress controller configured to route traffic to different applications based on paths or host headers.
-  * Local host mapping configured via `/etc/hosts`.
-
-### Part 3: K3d and Argo CD (GitOps)
-* **Objective:** Implement a lightweight local Kubernetes environment using K3d and adopt a GitOps workflow with Argo CD.
-* **Implementation:**
-  * Cluster creation using K3d.
-  * Installation and configuration of Argo CD within an isolated namespace (`argocd`).
-  * Continuous synchronization enabling Argo CD to reconcile the cluster state against the specified Git repository.
-
-### Bonus: Local GitLab Integration
-* **Objective:** Deploy a self-hosted GitLab instance inside the cluster and integrate it with CI/CD pipelines and Argo CD.
-* **Implementation:**
-  * Execution of a local GitLab deployment within a dedicated `gitlab` namespace.
-  * Automation of build triggers and manifest updates upon code commits.
-
----
-
-## Prerequisites
-
-Ensure the following dependencies are installed on the host machine prior to deployment:
 * VirtualBox (or equivalent supported hypervisor)
 * Vagrant
 * Docker Engine
 * K3d CLI
 * Kubectl CLI
 
----
+### Execution and Setup
 
-## Deployment Instructions
+#### Part 1: Vagrant and K3s Cluster
 
-### Part 1: Provisioning the Vagrant Cluster
+Navigate to the `p1` directory and provision the virtual machines:
+
 ```bash
 cd p1
 vagrant up
+```
+
+Access the control plane server node to verify the node status:
+
+```bash
 vagrant ssh s_vm
 kubectl get nodes
 ```
 
-### Part 3: K3d and Argo CD Setup
+#### Part 2: Kubernetes Applications and Ingress
+
+Navigate to the `p2` directory and apply the Kubernetes deployment, service, and ingress manifests:
+
+```bash
+cd p2/conf
+kubectl apply -f .
+```
+
+Verify that the deployments, services, and ingress rules are active:
+
+```bash
+kubectl get all
+kubectl get ingress
+```
+
+#### Part 3: K3d and Argo CD (GitOps)
+
+Create a local K3d cluster with required port forwarding rules and deploy Argo CD:
+
 ```bash
 cd p3
-# Create the K3d cluster with required port forwarding
-k3d cluster create mycluster --api-port 6550 -p "80:80@loadbalancer" -p "443:443@loadbalancer"
-
-# Install Argo CD
+k3d cluster create iot-cluster --api-port 6550 -p "80:80@loadbalancer" -p "443:443@loadbalancer"
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
----
+Apply the Argo CD application manifest to begin continuous synchronization:
 
-## Troubleshooting & Maintenance
-* **Virtual Machine Cleanup:** In cases where Vagrant instances fail to terminate, use `vboxmanage list vms` to identify and remove orphan virtual machines.
-* **Resource Allocation:** Ensure sufficient memory and CPU resources are allocated to the virtual machine provider and Docker daemon to avoid provisioning timeouts.
+```bash
+kubectl apply -n argocd -f conf/application.yaml
+```
+
+## Resources
+
+### Documentation & References
+
+* [Kubernetes Documentation](https://kubernetes.io/docs/)
+* [K3s Lightweight Kubernetes Documentation](https://docs.k3s.io/)
+* [K3d Documentation](https://k3d.io/)
+* [Argo CD Documentation](https://argo-cd.readthedocs.io/)
+* [Vagrant Documentation](https://developer.hashicorp.com/vagrant/docs)
+
+### Artificial Intelligence Usage
+
+Artificial intelligence tools were used during the development of this project for the following specific tasks and components:
+
+* **Documentation:** Assisting in generating and formatting this README according to the required structure and standards.
+* **Syntax Verification:** Reviewing YAML manifest files for Kubernetes resource configurations (Ingress, Deployment, and Argo CD Application resources).
+* **Troubleshooting:** Diagnosing provisioning logic and network initialization flags within Vagrant shell scripts.
