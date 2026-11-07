@@ -1,6 +1,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/bookworm64"
 
+  config.vm.boot_timeout = 600
   config.vm.define "szapata-S" do |control|
     control.vm.hostname = "szapata-S"
     control.vm.network "private_network", ip: "192.168.56.110"
@@ -11,7 +12,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--name", "szapata-S"]
     end
     
-    control.vm.provision "shell", path: "scripts/server.sh"
+    control.vm.provision "shell", path: "scripts/server.sh", reset: true
   end
   
   

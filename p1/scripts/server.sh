@@ -2,7 +2,7 @@
 
 set -e
 
-apt update && apt install -y curl
+apt-get update && apt-get install -y curl
 
 
 if ! systemctl is-active --quiet k3s; then
@@ -10,5 +10,5 @@ if ! systemctl is-active --quiet k3s; then
     --node-ip 192.168.56.110 \
     --write-kubeconfig-mode 644 \
     --disable=servicelb \
-    --disable=traefik \
+    --disable=traefik
 fi

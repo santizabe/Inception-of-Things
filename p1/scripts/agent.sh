@@ -2,7 +2,7 @@
 
 set -e
 
-apt update && apt install -y curl
+apt-get update && apt-get install -y curl
 
 if ! systemctl is-active --quiet k3s; then
     until curl -k https://192.168.56.110:6443 >/dev/null 2>&1; do
